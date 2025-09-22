@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Workout Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 { color: #ffcc00; }
+        .muscle-group {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            background: #333;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .selected { background: #ffcc00; color: black; }
+        #exerciseList { margin-top: 20px; display: none; text-align: left; max-width: 600px; margin: auto; }
+        .exercise {
+            background: #222;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .exercise h3 { color: #ffcc00; margin-bottom: 5px; }
+        button {
+            padding: 10px;
+            font-size: 18px;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+            background: #ffcc00;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🏋️ Gym Workout Guide</h1>
+    
+    <p>Select the muscle groups you want to train:</p>
+    
+    <div id="muscles">
+        <span class="muscle-group" onclick="toggleSelection(this, 'Chest')">Chest</span>
+        <span class="muscle-group" onclick="toggleSelection(this, 'Back')">Back</span>
+        <span class="muscle-group" onclick="toggleSelection(this, 'Shoulders')">Shoulders</span>
+        <span class="muscle-group" onclick="toggleSelection(this, 'Arms')">Arms</span>
+        <span class="muscle-group" onclick="toggleSelection(this, 'Legs')">Legs</span>
+        <span class="muscle-group" onclick="toggleSelection(this, 'Abs')">Abs</span>
+    </div>
+
+    <br>
+    <button onclick="showExercises()">Get Workout Plan</button>
+
+    <div id="exerciseList"></div>
+
+    <script>
+        let selectedMuscles = [];
+
+        const workouts = {
+            "Chest": [
+                { name: "Bench Press", target: "Overall Chest", sets: "4 sets of 8-12 reps", info: "Use a barbell, keep controlled reps, and focus on contraction." },
+                { name: "Incline Dumbbell Press", target: "Upper Chest", sets: "3 sets of 10-12 reps", info: "Use a slight incline to focus on the upper pecs." },
+                { name: "Dips", target: "Lower Chest", sets: "3 sets of 10 reps", info: "Lean slightly forward to engage the chest more." }
+            ],
+            "Back": [
+                { name: "Deadlifts", target: "Overall Back", sets: "4 sets of 6-8 reps", info: "Maintain a strong core, lift with your legs, not your back." },
+                { name: "Pull-ups", target: "Upper Back & Lats", sets: "3 sets of 8-12 reps", info: "Use different grips to target different areas." },
+                { name: "Bent-over Rows", target: "Mid Back", sets: "3 sets of 10 reps", info: "Keep your back straight and row with control." }
+            ],
+            "Shoulders": [
+                { name: "Overhead Press", target: "Front Delts", sets: "3 sets of 8-10 reps", info: "Use strict form to avoid injury and push through the shoulders." },
+                { name: "Lateral Raises", target: "Side Delts", sets: "3 sets of 12-15 reps", info: "Keep arms slightly bent and raise to shoulder height." },
+                { name: "Face Pulls", target: "Rear Delts", sets: "3 sets of 12-15 reps", info: "Use a rope attachment to target rear delts effectively." }
+            ],
+            "Arms": [
+                { name: "Barbell Curls", target: "Biceps", sets: "3 sets of 12 reps", info: "Keep elbows tucked and avoid swinging the weight." },
+                { name: "Tricep Dips", target: "Triceps", sets: "3 sets of 10-12 reps", info: "Lean back slightly to focus on triceps engagement." },
+                { name: "Hammer Curls", target: "Brachialis", sets: "3 sets of 12 reps", info: "Use a neutral grip to hit both biceps and forearms." }
+            ],
+            "Legs": [
+                { name: "Squats", target: "Quads & Glutes", sets: "4 sets of 8-12 reps", info: "Keep knees in line with toes, go deep for full range of motion." },
+                { name: "Romanian Deadlifts", target: "Hamstrings", sets: "3 sets of 10 reps", info: "Keep your back straight and hinge at the hips." },
+                { name: "Calf Raises", target: "Calves", sets: "4 sets of 15-20 reps", info: "Go slow and pause at the top for max contraction." }
+            ],
+            "Abs": [
+                { name: "Hanging Leg Raises", target: "Lower Abs", sets: "3 sets of 12 reps", info: "Keep legs straight and control the movement." },
+                { name: "Russian Twists", target: "Obliques", sets: "3 sets of 20 reps", info: "Use a weight for added resistance." },
+                { name: "Plank", target: "Core Stability", sets: "3 sets of 60 seconds", info: "Keep your body straight and engage your core." }
+            ]
+        };
+
+        function toggleSelection(element, muscle) {
+            if (selectedMuscles.includes(muscle)) {
+                selectedMuscles = selectedMuscles.filter(m => m !== muscle);
+                element.classList.remove("selected");
+            } else {
+                selectedMuscles.push(muscle);
+                element.classList.add("selected");
+            }
+        }
+
+        function showExercises() {
+            let list = document.getElementById("exerciseList");
+            list.innerHTML = ""; 
+
+            if (selectedMuscles.length === 0) {
+                list.innerHTML = "<p>Please select at least one muscle group.</p>";
+                list.style.display = "block";
+                return;
+            }
+
+            selectedMuscles.forEach(muscle => {
+                let exercises = workouts[muscle];
+
+                let muscleHeader = document.createElement("h2");
+                muscleHeader.innerText = `💪 ${muscle} Exercises`;
+                list.appendChild(muscleHeader);
+
+                exercises.forEach(exercise => {
+                    let exerciseDiv = document.createElement("div");
+                    exerciseDiv.classList.add("exercise");
+
+                    exerciseDiv.innerHTML = `
+                        <h3>${exercise.name}</h3>
+                        <p><strong>Target:</strong> ${exercise.target}</p>
+                        <p><strong>Sets & Reps:</strong> ${exercise.sets}</p>
+                        <p>${exercise.info}</p>
+                    `;
+
+                    list.appendChild(exerciseDiv);
+                });
+            });
+
+            list.style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
